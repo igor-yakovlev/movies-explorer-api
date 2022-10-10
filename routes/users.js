@@ -1,11 +1,12 @@
 const {celebrate, Joi} = require('celebrate');
 const express = require('express');
+const auth = require('../middlewares/auth');
 
 const {
   getUserInfo,
   updateUser,
   createUser,
-  login
+  login,
 } = require('../controllers/users');
 
 const userRouter = express.Router();
@@ -23,6 +24,7 @@ userRouter.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+userRouter.use(auth);
 userRouter.get('/users/me', getUserInfo);
 userRouter.patch('/users/me', celebrate({
   body: Joi.object().keys({

@@ -13,7 +13,7 @@ const getMovies = async (req, res, next) => {
   }
 };
 
-const createMovie = async (res, req, next) => {
+const createMovie = async (req, res, next) => {
   try {
     const owner = req.user._id;
     const data = await movie.create({...req.body, owner});
@@ -29,6 +29,7 @@ const createMovie = async (res, req, next) => {
 
 const deleteMovie = async (req, res, next) => {
   try {
+    console.log(req.params);
     const currentMovie = await movie.findById(req.params.movieId);
     if (!currentMovie) {
       throw new NotFoundError('Передан несуществующий _id фильма');

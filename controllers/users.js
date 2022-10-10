@@ -1,10 +1,12 @@
-const user = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/not-found-err');
-const BadRequestError = require('../errors/not-found-err');
-const ConflictError = require('../errors/conflict-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
+const BadRequestError = require('../errors/bad-request-err');
+const user = require('../models/user');
+const ConflictError = require('../errors/conflict-err');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const createUser = async (req, res, next) => {
   try {
@@ -37,7 +39,7 @@ const createUser = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
     const data = await user.findOne({ email });
     if (!data) {
       throw new UnauthorizedError('Неправильные почта или пароль');
@@ -107,5 +109,5 @@ module.exports = {
   getUserInfo,
   updateUser,
   createUser,
-  login
+  login,
 };

@@ -27,7 +27,7 @@ movieRoutes.post('/movies', celebrate({
   }),
 }), createMovie);
 movieRoutes.delete('/movies/:movieId', celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
     movieId: Joi.string().required().custom((value, helpers) => {
       if (!ObjectId.isValid(value)) {
         return helpers.error('any.invalid')
