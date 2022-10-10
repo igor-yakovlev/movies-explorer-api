@@ -50,7 +50,7 @@ const shema = mongoose.Schema({
     required: [true, 'Поле является обязательным'],
   },
   moviedId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Number,
     required: [true, 'Поле является обязательным'],
   },
   nameRU: {
