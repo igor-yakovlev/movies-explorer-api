@@ -1,6 +1,67 @@
 const user = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/not-found-err');
+const ConflictError = require('../errors/conflict-err');
+const UnauthorizedError = require('../errors/unauthorized-err');
+
+const createUser = async (req, res, next) => {
+  try {
+    const {
+      email,
+      password,
+      name
+    } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const data = await user.create({
+      email,
+      name,
+      password: hashedPassword,
+    });
+    res.status(201).send({
+      data
+    });
+  } catch (e) {
+    if (e.name === 'ValidationError') {
+      next(new BadRequestError(e.message));
+      return;
+    }
+    if (e.code === 11000) {
+      next(new ConflictError('Такой пользователь уже существует'));
+      return;
+    }
+    next(e);
+  }
+}
+
+const login = async (req, res, next) => {
+  try {
+    const {email, password} = req.body;
+    const data = await user.findOne({ email });
+    if (!data) {
+      throw new UnauthorizedError('Неправильные почта или пароль');
+    }
+    const comparePasswords = await bcrypt.compare(password, data.password);
+    if (comparePasswords) {
+      const token = jwt.sign({_id: data._id}, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
+        expiresIn: '7d',
+      });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      });
+      res.send({_id: data, token});
+    } else {
+      throw new UnauthorizedError('Неправильные почта или пароль');
+    }
+  } catch (e) {
+    next(e);
+  }
+}
+
 
 const getUserInfo = async (req, res, next) => {
   try {
@@ -45,4 +106,6 @@ const updateUser = async (req, res, next) => {
 module.exports = {
   getUserInfo,
   updateUser,
+  createUser,
+  login
 };
