@@ -29,7 +29,6 @@ const createMovie = async (req, res, next) => {
 
 const deleteMovie = async (req, res, next) => {
   try {
-    console.log(req.params);
     const currentMovie = await movie.findById(req.params.movieId);
     if (!currentMovie) {
       throw new NotFoundError('Передан несуществующий _id фильма');
