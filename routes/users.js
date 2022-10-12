@@ -1,4 +1,3 @@
-const {celebrate, Joi} = require('celebrate');
 const express = require('express');
 const auth = require('../middlewares/auth');
 
@@ -8,31 +7,18 @@ const {
   createUser,
   login,
 } = require('../controllers/users');
+const {
+  validLogin,
+  validCreateUser,
+  validUpdateUser,
+} = require('../middlewares/requestValid');
 
 const userRouter = express.Router();
 
-userRouter.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
-userRouter.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    name: Joi.string().min(2).max(30),
-    password: Joi.string().required(),
-  }),
-}), createUser);
+userRouter.post('/signin', validLogin, login);
+userRouter.post('/signup', validCreateUser, createUser);
 userRouter.use(auth);
 userRouter.get('/users/me', getUserInfo);
-userRouter.patch('/users/me', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    email: Joi.string().required().email(),
-  }),
-}), updateUser);
-
-
+userRouter.patch('/users/me', validUpdateUser, updateUser);
 
 module.exports = userRouter;

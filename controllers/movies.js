@@ -5,8 +5,8 @@ const movie = require('../models/movie');
 
 const getMovies = async (req, res, next) => {
   try {
-    const owner = req.user._id
-    const data = await movie.find({owner});
+    const owner = req.user._id;
+    const data = await movie.find({ owner });
     res.send(data);
   } catch (e) {
     next(e);
@@ -16,8 +16,12 @@ const getMovies = async (req, res, next) => {
 const createMovie = async (req, res, next) => {
   try {
     const owner = req.user._id;
-    const data = await movie.create({...req.body, owner});
-    res.status(201).send(data);
+    const data = await movie.create({
+      ...req.body,
+      owner,
+    });
+    res.status(201)
+      .send(data);
   } catch (e) {
     if (e.name === 'ValidationError') {
       next(new BadRequestError(e.message));

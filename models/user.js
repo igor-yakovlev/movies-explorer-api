@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-
 const shema = mongoose.Schema({
   email: {
     type: String,
@@ -20,7 +19,7 @@ const shema = mongoose.Schema({
     type: String,
     required: [true, 'Поле является обязательным'],
     minLength: [2, "Должно быть больше 2-х символов, сейчас вы ввели '{VALUE}'"],
-    maxLength: [30, "Должно быть меньше 30 символов, сейчас вы ввели '{VALUE}'"]
+    maxLength: [30, "Должно быть меньше 30 символов, сейчас вы ввели '{VALUE}'"],
   },
 });
 
