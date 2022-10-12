@@ -6,14 +6,17 @@ const BadRequestError = require('../errors/bad-request-err');
 const user = require('../models/user');
 const ConflictError = require('../errors/conflict-err');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const {
+  NODE_ENV,
+  JWT_SECRET,
+} = process.env;
 
 const createUser = async (req, res, next) => {
   try {
     const {
       email,
       password,
-      name
+      name,
     } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     const data = await user.create({
@@ -21,9 +24,10 @@ const createUser = async (req, res, next) => {
       name,
       password: hashedPassword,
     });
-    res.status(201).send({
-      data
-    });
+    res.status(201)
+      .send({
+        data,
+      });
   } catch (e) {
     if (e.name === 'ValidationError') {
       next(new BadRequestError(e.message));
@@ -35,35 +39,38 @@ const createUser = async (req, res, next) => {
     }
     next(e);
   }
-}
+};
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+    } = req.body;
     const data = await user.findOne({ email });
     if (!data) {
       throw new UnauthorizedError('Неправильные почта или пароль');
     }
     const comparePasswords = await bcrypt.compare(password, data.password);
     if (comparePasswords) {
-      const token = jwt.sign({_id: data._id}, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
+      const token = jwt.sign({ _id: data._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
         expiresIn: '7d',
       });
       res.cookie('jwt', token, {
         maxAge: 3600000,
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
       });
-      res.send({_id: data, token});
+      res.send({
+        _id: data,
+        token,
+      });
     } else {
       throw new UnauthorizedError('Неправильные почта или пароль');
     }
   } catch (e) {
     next(e);
   }
-}
-
+};
 
 const getUserInfo = async (req, res, next) => {
   try {
@@ -72,25 +79,25 @@ const getUserInfo = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-}
+};
 
 const updateUser = async (req, res, next) => {
   try {
     const {
       name,
-      email
-    } = req.body
+      email,
+    } = req.body;
     const data = await user.findByIdAndUpdate(req.user._id, {
       name,
-      email
+      email,
     }, {
       new: true,
-      runValidators: true
-    }, );
+      runValidators: true,
+    });
     if (!data) {
-      throw new NotFoundError('Пользователь с таким _id не найден')
+      throw new NotFoundError('Пользователь с таким _id не найден');
     }
-    res.send(data)
+    res.send(data);
   } catch (e) {
     if (e.name === 'ValidationError') {
       next(new BadRequestError(e.message));
@@ -103,7 +110,6 @@ const updateUser = async (req, res, next) => {
     next(e);
   }
 };
-
 
 module.exports = {
   getUserInfo,
