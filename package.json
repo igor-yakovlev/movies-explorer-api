@@ -1,7 +1,7 @@
 {
   "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "api for movie search social network",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/igor-yakovlev/movies-explorer-api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Igor Yakovlev",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/igor-yakovlev/movies-explorer-api/issues"
@@ -27,7 +27,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-rate-limit": "^6.6.0",
     "express-winston": "^4.2.0",
+    "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.5",
     "validator": "^13.7.0",

@@ -5,6 +5,7 @@ const UnauthorizedError = require('../errors/unauthorized-err');
 const BadRequestError = require('../errors/bad-request-err');
 const user = require('../models/user');
 const ConflictError = require('../errors/conflict-err');
+const { jwtSecret } = require('../utils/constants');
 
 const {
   NODE_ENV,
@@ -53,7 +54,7 @@ const login = async (req, res, next) => {
     }
     const comparePasswords = await bcrypt.compare(password, data.password);
     if (comparePasswords) {
-      const token = jwt.sign({ _id: data._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {
+      const token = jwt.sign({ _id: data._id }, NODE_ENV === 'production' ? JWT_SECRET : jwtSecret, {
         expiresIn: '7d',
       });
       res.cookie('jwt', token, {
@@ -87,6 +88,7 @@ const updateUser = async (req, res, next) => {
       name,
       email,
     } = req.body;
+
     const data = await user.findByIdAndUpdate(req.user._id, {
       name,
       email,
@@ -99,6 +101,10 @@ const updateUser = async (req, res, next) => {
     }
     res.send(data);
   } catch (e) {
+    if (e.code === 11000) {
+      next(new ConflictError('Такой пользователь уже существует'));
+      return;
+    }
     if (e.name === 'ValidationError') {
       next(new BadRequestError(e.message));
       return;

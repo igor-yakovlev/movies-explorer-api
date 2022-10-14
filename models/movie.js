@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const regExpLink = require('../utils/constants');
+const {
+  regExpLink
+} = require('../utils/constants');
 
 const shema = mongoose.Schema({
   country: {
@@ -48,7 +50,7 @@ const shema = mongoose.Schema({
     ref: 'user',
     required: [true, 'Поле является обязательным'],
   },
-  moviedId: {
+  movieId: {
     type: Number,
     required: [true, 'Поле является обязательным'],
   },

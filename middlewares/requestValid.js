@@ -2,8 +2,18 @@ const {
   celebrate,
   Joi,
 } = require('celebrate');
-const { ObjectId } = require('mongoose').Types;
-const regExpLink = require('../utils/constants');
+const {
+  ObjectId
+} = require('mongoose').Types;
+const validator = require('validator');
+
+
+const validateUrl = (value, helpers) => {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.message('Поле thumbnail заполнено некорректно')
+}
 
 const validLogin = celebrate({
   body: Joi.object()
@@ -23,6 +33,7 @@ const validCreateUser = celebrate({
         .required()
         .email(),
       name: Joi.string()
+        .required()
         .min(2)
         .max(30),
       password: Joi.string()
@@ -58,18 +69,18 @@ const validCreateMovie = celebrate({
         .required(),
       image: Joi.string()
         .required()
-        .pattern(regExpLink),
+        .custom(validateUrl),
       trailerLink: Joi.string()
         .required()
-        .pattern(regExpLink),
+        .custom(validateUrl),
       thumbnail: Joi.string()
         .required()
-        .pattern(regExpLink),
+        .custom(validateUrl),
       nameRU: Joi.string()
         .required(),
       nameEN: Joi.string()
         .required(),
-      moviedId: Joi.number()
+      movieId: Joi.number()
         .required(),
     }),
 });
