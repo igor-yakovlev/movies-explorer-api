@@ -39,8 +39,6 @@ app.use(cookieParser());
 
 app.use(requestLogger);
 
-app.set('trust proxy', 1)
-app.get('/ip', (request, response) => response.send(request.ip))
 app.use(limiter);
 
 app.use(router);
