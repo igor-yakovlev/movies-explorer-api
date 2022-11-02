@@ -1,5 +1,5 @@
 require('dotenv').config();
-const helmet = require("helmet");
+const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -31,8 +31,8 @@ mongoose.connect(NODE_ENV === 'production' ? MONGO_DB_URL : mongoUrl, {
 });
 
 app.use(cors({
-  origin: ['http://localhost:4000', 'https://igor.yakovlev.nomoredomains.icu/'],
-  credentials: true
+  origin: ['http://localhost:4000', 'http://localhost:3000', 'https://igor.yakovlev.nomoredomains.icu/'],
+  credentials: true,
 }));
 app.use(bodyParser.json());
 app.use(cookieParser());
